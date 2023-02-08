@@ -2,6 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  background-color: #2d2c2c;
+/* 58A4B0 - color for metric font */
+
+body,
+html {
+  background-color: #373f51;
 }
