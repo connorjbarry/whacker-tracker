@@ -6,7 +6,11 @@ type MetricInfoProps = {
 };
 
 const MetricInfo = (props: MetricInfoProps) => {
-  return <div className="p-2">{props.title}</div>;
+  return (
+    <>
+      <div className="flex uppercase">{props.description} </div>
+    </>
+  );
 };
 
 export default MetricInfo;

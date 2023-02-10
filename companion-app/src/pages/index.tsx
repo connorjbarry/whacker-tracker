@@ -12,27 +12,38 @@ const metrics = {
     title: "Club Head Speed",
     metric: "100",
     units: "MPH",
+    desc: "The speed of the club head at impact",
   },
   club_angle: {
     title: "Club Face Angle",
     metric: "100",
-    units: "MPH",
+    units: "Deg",
+    desc: "The angle of the club face at impact",
   },
 
   ball_speed: {
     title: "Ball Speed",
     metric: "100",
     units: "MPH",
+    desc: "The speed of the ball at impact",
   },
   ball_distance: {
     title: "Ball Distance",
     metric: "100",
-    units: "MPH",
+    units: "Yds",
+    desc: "The distance the ball traveled",
   },
   smash_factor: {
     title: "Smash Factor",
     metric: "100",
-    units: "MPH",
+    units: "",
+    desc: "The ratio of ball speed to club speed",
+  },
+  launch_angle: {
+    title: "Launch Angle",
+    metric: "100",
+    units: "Deg",
+    desc: "The angle of the ball at launch",
   },
 };
 
@@ -57,6 +68,7 @@ const Home: NextPage = () => {
                 title={value.title}
                 metric={value.metric}
                 units={value.units}
+                desc={value.desc}
               />
             ))}
           </section>
