@@ -1,5 +1,3 @@
-import numpy as np
-
 CLUBHEADTOBALL = {
     "driver": 1.477876,
     "3wood": 1.476636,
