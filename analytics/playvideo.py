@@ -48,10 +48,6 @@ mask = cv2.inRange(hsv, lower_hsv, upper_hsv)
 bbox = cv2.selectROI("Frame", frame, False)
 ok = tracker.init(frame, bbox)
 
-object_detection = cv2.createBackgroundSubtractorMOG2(
-    history=100, varThreshold=40)
-
-
 # Check if video opened successfully
 if (video.isOpened() == False):
     print("Error opening video stream or file")
@@ -66,7 +62,6 @@ while(video.isOpened()):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, lower_hsv, upper_hsv)
     ok, bbox = tracker.update(frame)
-    mask = object_detection.apply(mask)
 
     fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer)
 
