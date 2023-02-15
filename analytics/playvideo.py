@@ -48,6 +48,9 @@ mask = cv2.inRange(hsv, lower_hsv, upper_hsv)
 bbox = cv2.selectROI("Frame", frame, False)
 ok = tracker.init(frame, bbox)
 
+object_detection = cv2.createBackgroundSubtractorMOG2(
+    history=100, varThreshold=40)
+
 
 # Check if video opened successfully
 if (video.isOpened() == False):
@@ -63,6 +66,7 @@ while(video.isOpened()):
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, lower_hsv, upper_hsv)
     ok, bbox = tracker.update(frame)
+    mask = object_detection.apply(mask)
 
     fps = cv2.getTickFrequency() / (cv2.getTickCount() - timer)
 
@@ -77,10 +81,10 @@ while(video.isOpened()):
                     cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 255), 2)
 
     cv2.putText(frame, tracker_type + " Tracker", (100, 20),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 170, 50), 2)
+                cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
 
     cv2.putText(frame, "FPS : " + str(int(fps)), (100, 50),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.75, (50, 170, 50), 2)
+                cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 0), 2)
 
     # print out the position of the bbox
     print(f"x: {x}, y: {y}")
