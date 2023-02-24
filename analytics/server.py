@@ -1,7 +1,7 @@
 import eventlet
 import socketio
 
-sio = socketio.Server()
+sio = socketio.Server(cors_allowed_origins='*')
 app = socketio.WSGIApp(sio, static_files={
     '/': {'content_type': 'text/html', 'filename': 'index.html'},
 })
@@ -12,15 +12,31 @@ def connect(sid, environ):
     print('connect ', sid)
 
 
-@sio.event
+@sio.on('connect')
 def my_message(sid, data):
-    print('message ', data)
-    sio.emit('my response', {'response': 'my response'}, room=sid)
+    sio.emit('my response', {
+        'club_speed': 96,
+        'club_angle': 8,
+        'ball_speed': 105,
+        'ball_distance': 250,
+        'smash_factor': 1,
+        'launch_angle': 40,
+    })
 
 
 @sio.event
 def disconnect(sid):
     print('disconnect ', sid)
+
+
+@sio.on('end')
+def end(sid, data):
+    print('end ', sid)
+
+
+@sio.on('start')
+def start(sid, data):
+    print('start ', sid)
 
 
 if __name__ == '__main__':
