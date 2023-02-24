@@ -3,6 +3,8 @@ import Head from "next/head";
 import ButtonGroup from "../components/ButtonGroup";
 import Header from "../components/Header";
 import Metric from "../components/Metric";
+import { io } from "socket.io-client";
+import { useEffect, useState } from "react";
 // import Link from "next/link";
 
 // import { api } from "../utils/api";
@@ -10,45 +12,66 @@ import Metric from "../components/Metric";
 const metrics = {
   club_speed: {
     title: "Club Head Speed",
-    metric: "100",
+    metric: "0",
     units: "MPH",
-    desc: "The speed of the club head at impact",
+    desc: "Speed of the club head at impact",
   },
   club_angle: {
     title: "Club Face Angle",
-    metric: "100",
+    metric: "0",
     units: "Deg",
-    desc: "The angle of the club face at impact",
+    desc: "Angle of the club face at impact",
   },
 
   ball_speed: {
     title: "Ball Speed",
-    metric: "100",
+    metric: "0",
     units: "MPH",
-    desc: "The speed of the ball at impact",
+    desc: "Speed of the ball at impact",
   },
   ball_distance: {
     title: "Ball Distance",
-    metric: "100",
+    metric: "0",
     units: "Yds",
-    desc: "The distance the ball traveled",
+    desc: "Distance the ball traveled",
   },
   smash_factor: {
     title: "Smash Factor",
-    metric: "100",
+    metric: "0",
     units: "",
-    desc: "The ratio of ball speed to club speed",
+    desc: "Ratio of ball speed to club speed",
   },
   launch_angle: {
     title: "Launch Angle",
-    metric: "100",
+    metric: "0",
     units: "Deg",
-    desc: "The angle of the ball at launch",
+    desc: "Angle of the ball at launch",
   },
 };
 
 const Home: NextPage = () => {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
+  const [socket, setSocket] = useState();
+  const [data, setData] = useState({});
+
+  useEffect(() => {
+    if (!socket) {
+      setSocket(io("http://localhost:5000", { transports: ["websocket"] }));
+    }
+
+    socket?.on("my response", (msg) => {
+      console.log(msg);
+      setData(msg);
+    });
+  }, [socket]);
+
+  const endSessionHandle = () => {
+    socket?.emit("end", "end session");
+  };
+
+  const startSwingHandle = () => {
+    socket?.emit("start", "start swing");
+  };
 
   return (
     <>
@@ -59,20 +82,25 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex h-screen flex-col items-center justify-center text-center">
         <Header />
-        <ButtonGroup />
+        <ButtonGroup
+          endSessionHandle={endSessionHandle}
+          startSwingHandle={startSwingHandle}
+        />
         <div className="grid h-4/5 w-full items-center justify-center px-6 md:grid-cols-2">
           <section className="grid items-center justify-center md:grid-cols-2">
             {Object.entries(metrics).map(([key, value]) => (
               <Metric
                 key={key}
                 title={value.title}
-                metric={value.metric}
+                metric={data[key] || value.metric}
                 units={value.units}
                 desc={value.desc}
               />
             ))}
           </section>
-          <section>swing path</section>
+          <section>
+            <p>swing path</p>
+          </section>
         </div>
       </main>
     </>
