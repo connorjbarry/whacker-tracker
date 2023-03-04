@@ -4,13 +4,13 @@ const ButtonGroup = ({ endSessionHandle, startSwingHandle }) => {
   return (
     <section className="text-black">
       <button
-        className="m-4 rounded-lg border border-[#D8DBE2] bg-[#F9FAFB] p-4"
+        className="m-4 rounded-lg border border-[#EBEBEB] bg-[#C0C0C0] p-4"
         onClick={endSessionHandle}
       >
         End Session
       </button>
       <button
-        className="m-4 rounded-lg border border-[#D8DBE2] bg-[#F9FAFB] p-4"
+        className="m-4 rounded-lg border border-[#EBEBEB] bg-[#C0C0C0] p-4"
         onClick={startSwingHandle}
       >
         Start Swing

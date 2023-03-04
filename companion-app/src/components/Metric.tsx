@@ -19,17 +19,19 @@ const Metric = (props: MetricProps) => {
 
   return (
     <>
-      <div className="relative m-4 flex justify-evenly rounded-lg border border-[#D8DBE2] p-8">
+      <div className="relative m-3 flex justify-between rounded-lg border border-[#C0C0C0] p-8">
         {showInfo ? (
           <MetricInfo title={props.title} description={props.desc} />
         ) : (
-          <>
-            <p className="">{props.title}</p>
-            <p>
-              <strong>{props.metric}</strong>
+          <div className="relative flex h-full w-full justify-between">
+            <p className="justify-start">{props.title}</p>
+            <p className="mx-2 text-xl">
+              <strong className="text-[#3A6EA5]">{props.metric}</strong>
             </p>
-            <p className="uppercase tracking-widest">{props.units}</p>
-          </>
+            <p className="justify-end uppercase tracking-widest">
+              {props.units}
+            </p>
+          </div>
         )}
 
         <div

@@ -34,7 +34,7 @@ const Header = () => {
 
   return (
     <h1
-      className="text-5xl uppercase tracking-widest text-white"
+      className="text-5xl uppercase tracking-widest text-[#3A6EA5]"
       ref={titleRef}
       data-value="Whacker Tracker"
     >

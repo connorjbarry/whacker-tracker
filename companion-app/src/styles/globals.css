@@ -6,6 +6,8 @@
 
 body,
 html {
-  background-color: #373f51;
-  color: #fff;
+  background-color: #343633;
+  color: #ebebeb;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
 }
