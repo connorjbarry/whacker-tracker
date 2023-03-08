@@ -54,16 +54,16 @@ const Home: NextPage = () => {
   // const hello = api.example.hello.useQuery({ text: "from tRPC" });
 
   const [data, setData] = useState({});
+  const socket = io("http://localhost:5000", { transports: ["websocket"] });
 
   useEffect(() => {
-    const socket = io("http://localhost:5000", { transports: ["websocket"] });
     socket.onAny((event, ...args) => {
       // console.log(event, args);
       if (event === "metrics") {
         setData(args[0]);
       }
     });
-  }, []);
+  }, [socket]);
 
   const endSessionHandle = () => {
     // socket.emit("end", "end session");

@@ -40,6 +40,7 @@ def metrics(sid, data):
 def connect(sid, environ):
     logging.info(f'connect {sid}')
     sio.start_background_task(metrics, sid, 'data')
+    ble_connect(sid, 'data')
 
 
 @ sio.on('metrics')
@@ -68,6 +69,11 @@ def end(sid, data):
 @ sio.on('start')
 def start(sid, data):
     print('start ', sid)
+
+
+@ sio.event
+def ble_connect(sid, data):
+    logging.warning('----THIS ONLY HAPPENS ON CONNECT----')
 
 
 if __name__ == '__main__':
