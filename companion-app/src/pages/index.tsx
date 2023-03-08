@@ -5,6 +5,7 @@ import Header from "../components/Header";
 import Metric from "../components/Metric";
 import { io } from "socket.io-client";
 import { useEffect, useState } from "react";
+import SwingPath from "../components/SwingPath";
 // import Link from "next/link";
 
 // import { api } from "../utils/api";
@@ -56,9 +57,8 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const socket = io("http://localhost:5000", { transports: ["websocket"] });
-
     socket.onAny((event, ...args) => {
-      console.log(event, args);
+      // console.log(event, args);
       if (event === "metrics") {
         setData(args[0]);
       }
@@ -101,7 +101,7 @@ const Home: NextPage = () => {
             ))}
           </section>
           <section>
-            <p>swing path</p>
+            <SwingPath />
           </section>
         </div>
       </main>
