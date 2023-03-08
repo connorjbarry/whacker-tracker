@@ -24,17 +24,23 @@ const Header = () => {
 
       iteration += 1 / 3;
     }, 60);
+
+    return interval;
   };
 
   useEffect(() => {
     let iteration = 0;
-    changeText(iteration);
+    const interval = changeText(iteration);
     iteration = 0;
+
+    return () => {
+      clearInterval(interval);
+    };
   }, []);
 
   return (
     <h1
-      className="text-5xl uppercase tracking-widest text-[#3A6EA5]"
+      className="text-5xl uppercase tracking-widest text-white"
       ref={titleRef}
       data-value="Whacker Tracker"
     >

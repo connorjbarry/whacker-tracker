@@ -6,7 +6,7 @@
 
 body,
 html {
-  background-color: #343633;
+  background-color: rgb(31 41 55 / 1);
   color: #ebebeb;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
