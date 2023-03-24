@@ -2,15 +2,21 @@ import eventlet
 import socketio
 import logging
 import coloredlogs
+import asyncio
+import discover_ble
+from discover_ble import connected_to_peripheral
+import Adafruit_BluefruitLE
 
 sio = socketio.Server(cors_allowed_origins='*')
 app = socketio.WSGIApp(sio, static_files={
     '/': {'content_type': 'text/html', 'filename': 'index.html'},
 })
 
+ble = Adafruit_BluefruitLE.get_provider()
+
 
 coloredlogs.install(fmt='%(asctime)s | %(levelname)s - %(message)s',
-                    datefmt='%d-%b-%y %H:%M:%S', level='DEBUG')
+                    datefmt='%d-%b-%y %H:%M:%S', level='INFO')
 
 METRICS = {
     'club_speed': 1,
@@ -25,7 +31,7 @@ METRICS = {
 @ sio.event
 def metrics(sid, data):
     while(True):
-        logging.debug("updating metrics...")
+        logging.info("updating metrics...")
         METRICS['club_speed'] += 1
         METRICS['club_angle'] += 1
         METRICS['ball_speed'] += 1
@@ -39,8 +45,9 @@ def metrics(sid, data):
 @ sio.event
 def connect(sid, environ):
     logging.info(f'connect {sid}')
-    sio.start_background_task(metrics, sid, 'data')
-    ble_connect(sid, 'data')
+    # logging.error("starting background task...")
+    sio.start_background_task(ble_connect, sid, 'data')
+    # sio.start_background_task(metrics, sid, 'data')
 
 
 @ sio.on('metrics')
@@ -63,17 +70,26 @@ def disconnect(sid):
 
 @ sio.on('end')
 def end(sid, data):
-    print('end ', sid)
+    # print('end ', sid)
+    pass
 
 
 @ sio.on('start')
 def start(sid, data):
-    print('start ', sid)
+    # print('start ', sid)
+    pass
 
 
 @ sio.event
 def ble_connect(sid, data):
-    logging.warning('----THIS ONLY HAPPENS ON CONNECT----')
+    for _ in range(10):
+        ble.initialize()
+        print("ble initialized\n")
+        ble.run_mainloop_with(discover_ble.search_ble)
+        print("ble mainloop aborted\n")
+        sio.start_background_task(metrics, sid, 'data')
+        eventlet.sleep(25)
+    # if connected_to_peripheral:
 
 
 if __name__ == '__main__':

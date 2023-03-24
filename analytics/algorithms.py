@@ -37,8 +37,38 @@ CLUBLOFT = {
 DISTMULTIPLIER_CH = 3.16
 DISTMULTIPLIER_BS = 2.04
 
+CLUB_MASS = 0
 
-def get_club_head_speed(coords):
+TIME_DATA_COLLECTED = 0
+
+""" 
+? DATA FORMAT:
+[     0]   -993 -> angular x
+[     1]   -580 -> angular y
+[     2]  -1153 -> angular z
+[     3]  -2734 -> linear x
+[     4]    503 -> linear y
+[     5]   1561 -> linear z
+
+[     0]   -381
+[     1]   -790
+[     2]    437
+[     3]   -224
+[     4]   1391
+[     5]   1181
+
+[     0]    183
+[     1]   -187
+[     2]    610
+[     3]   -216
+[     4]   1327
+[     5]   1402
+
+Data comes in as a list of 6 values, the first three being the angular (x, y, z) acceleration of the club, and the last three being the linear (x, y, z) acceleration of the club.
+"""
+
+
+def get_club_head_speed(linear_velo, angular_velo):
     pass
 
 
