@@ -1,11 +1,11 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import ButtonGroup from "../components/ButtonGroup";
 import Header from "../components/Header";
 import Metric from "../components/Metric";
-import { io } from "socket.io-client";
+import { socket } from "../utils/socket";
 import { useEffect, useState } from "react";
 import SwingPath from "../components/SwingPath";
+import { io } from "socket.io-client";
 // import Link from "next/link";
 
 // import { api } from "../utils/api";
@@ -56,24 +56,26 @@ const Home: NextPage = () => {
   const [data, setData] = useState({});
 
   useEffect(() => {
-    const socket = io("http://localhost:5000", { transports: ["websocket"] });
+    console.log("hey");
+    const socket = io("http://localhost:5000", {
+      transports: ["websocket"],
+      multiplex: false,
+    });
+    socket.on("connect", () => {
+      console.log("connected");
+      socket.emit("detection", "hello world");
+    });
     socket.onAny((event, ...args) => {
-      // console.log(event, args);
+      console.log(event, args);
       if (event === "metrics") {
         setData(args[0]);
+        socket.emit("detection", "hello world");
       }
     });
+    return () => {
+      socket.off("connect");
+    };
   }, []);
-
-  const endSessionHandle = () => {
-    // socket.emit("end", "end session");
-    console.log("end session");
-  };
-
-  const startSwingHandle = () => {
-    // socket.emit("start", "start swing");
-    console.log("start swing");
-  };
 
   return (
     <>
@@ -84,10 +86,10 @@ const Home: NextPage = () => {
       </Head>
       <main className="flex h-screen flex-col items-center justify-center text-center">
         <Header />
-        <ButtonGroup
+        {/* <ButtonGroup
           endSessionHandle={endSessionHandle}
           startSwingHandle={startSwingHandle}
-        />
+        /> */}
         <div className="grid h-4/5 w-full items-center justify-center px-6 xl:grid-cols-2">
           <section className="grid w-full items-center justify-center md:grid-cols-2">
             {Object.entries(metrics).map(([key, value]) => (

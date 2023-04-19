@@ -2,12 +2,18 @@ import uuid
 import time
 import random
 import Adafruit_BluefruitLE
+import struct
 
 DEVICE_NAME = "BLE-Server"
 
 SERVICE_UUID = uuid.UUID('00000180-0000-1000-8000-00805F9B34FB')
 WRITE_UUID = uuid.UUID('0000DEAD-0000-1000-8000-00805F9B34FB')
-READ_UUID = uuid.UUID('0000FEF4-0000-1000-8000-00805F9B34FB')
+READ_UUID_1 = uuid.UUID('0000FEF4-0000-1000-8000-00805F9B34FB')
+READ_UUID_2 = uuid.UUID('0000FEF5-0000-1000-8000-00805F9B34FB')
+READ_UUID_3 = uuid.UUID('0000FEF6-0000-1000-8000-00805F9B34FB')
+READ_UUID_4 = uuid.UUID('0000FEF7-0000-1000-8000-00805F9B34FB')
+READ_UUID_5 = uuid.UUID('0000FEF8-0000-1000-8000-00805F9B34FB')
+READ_UUID_6 = uuid.UUID('0000FEF9-0000-1000-8000-00805F9B34FB')
 connected_to_peripheral = False
 # SERVICE_UUID = uuid.UUID('0180')
 # WRITE_UUID = uuid.UUID('DEAD')
@@ -81,12 +87,13 @@ def search_ble():
                 "Not connected to peripheral: ", connected_to_peripheral)
             try:
                 print('  Discovering services and characteristics...')
-                peripheral.discover([SERVICE_UUID], [WRITE_UUID, READ_UUID])
+                peripheral.discover(
+                    [SERVICE_UUID], [WRITE_UUID, READ_UUID_1, READ_UUID_2])
+                print('  Discovered services and characteristics!!!')
 
                 # Find the service and its characteristics
                 service = peripheral.find_service(SERVICE_UUID)
                 tx = service.find_characteristic(WRITE_UUID)
-                rx = service.find_characteristic(READ_UUID)
 
                 # Randomize the intervals between different operations
                 # to simulate user-triggered BLE actions.
@@ -100,9 +107,28 @@ def search_ble():
                 sleep_random(1, 1000)
 
                 # Read characteristic and make sure it matches the value written.
-                read_val = rx.read_value()
-                print('  Read ' + str(read_val) + ' from the read char')
-                print('-------READ VALUE------- \n-> ', read_val)
+
+                rx1 = service.find_characteristic(READ_UUID_2)
+                while rx1.read_value() == b'':
+                    print("Waiting for data...")
+                    time.sleep(0.5)
+
+                while True:
+                    rx = service.find_characteristic(READ_UUID_1)
+                    read_val = rx.read_value()
+                    # read_val_1 = rx1.read_value()
+                    # print('  Read ' + str(read_val) + ' from the read char')
+                    print('-------READ VALUE------- \n-> ', str(read_val))
+                    print('\n')
+
+                    list_of = struct.unpack(
+                        '<' + 'h' * (len(read_val) // 2), read_val)
+                    print(list_of)
+                    print(len(list_of))
+                    time.sleep(10)
+                    # print('  Read ' + str(read_val_1) + ' from the read char')
+                    # print('-------READ VALUE------- \n-> ', read_val_1)
+                    # time.sleep(1)
                 # if write_val != read_val:
                 #     echo_mismatch_count = echo_mismatch_count + 1
                 # print('  Read value does not match value written')
