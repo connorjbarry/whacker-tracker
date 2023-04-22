@@ -115,15 +115,21 @@ def main():
                     rx_s1_numElements.read_value(), "little", signed=False)
                 s2 = int.from_bytes(
                     rx_s2_numElements.read_value(), "little", signed=False)
+                s3 = int.from_bytes(
+                    rx_s3_numElements.read_value(), "little", signed=False)
                 i = 0
-                while s1 == 0 or s2 == 0:
+                while s1 == 0 or s2 == 0 or s3 == 0:
                     print(f"waiting for data{'.'*i}", end="\r")
                     s1 = int.from_bytes(
                         rx_s1_numElements.read_value(), "little", signed=False)
                     s2 = int.from_bytes(
                         rx_s2_numElements.read_value(), "little", signed=False)
+                    s3 = int.from_bytes(
+                        rx_s3_numElements.read_value(), "little", signed=False)
                     i += 1
-
+                # s1 = s1 * 6
+                # s2 = s2 * 6
+                # s3 = s3 * 6
                 print(f"printing {s1} amount of values from sensor 1")
                 #start = time.time()
                 data_1 = []
@@ -152,7 +158,24 @@ def main():
 
                 data_2 = [item for sublist in data_2 for item in sublist]
 
-                data = [data_1, data_2]
+                print(f"printing {s3} amount of values from sensor 3")
+                data_3 = []
+                for i in range(s3 // 2):
+                    rx_s3_read = rx_s3.read_value()
+
+                    list_of_data_3 = struct.unpack(
+                        '<' + 'h' * (len(rx_s3_read) // 2), rx_s3_read)
+
+                    data_3.append(list_of_data_3)
+
+                data_3 = [item for sublist in data_3 for item in sublist]
+
+                # print(f'Data from sensor 1: {data_1}, length: {len(data_1)}')
+                # print(f'Data from sensor 2: {data_2}, length: {len(data_2)}')
+                # print(f'Data from sensor 3: {data_3}, length: {len(data_3)}')
+
+                data = [data_1, data_2, data_3]
+
                 data = [item for sublist in data for item in sublist]
                 print(data)
 

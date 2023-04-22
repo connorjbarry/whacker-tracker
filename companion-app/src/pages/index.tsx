@@ -57,8 +57,9 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     console.log("hey");
-    const socket = io("http://localhost:5000", {
+    const socket = io(`ws://localhost:5000/?t=${Date.now()}`, {
       transports: ["websocket"],
+      upgrade: false,
       multiplex: false,
     });
     socket.on("connect", () => {
@@ -73,7 +74,9 @@ const Home: NextPage = () => {
       }
     });
     return () => {
+      socket.off("metrics");
       socket.off("connect");
+      socket.off("detection");
     };
   }, []);
 
@@ -90,7 +93,11 @@ const Home: NextPage = () => {
           endSessionHandle={endSessionHandle}
           startSwingHandle={startSwingHandle}
         /> */}
-        <div className="grid h-4/5 w-full items-center justify-center px-6 xl:grid-cols-2">
+        <p className="justify-cente flex items-center text-slate-300 opacity-75">
+          <strong>Note:</strong>&nbsp; The button on the club opens a 4 second
+          window to swing. Please only click it when ready to swing.
+        </p>
+        <div className="grid h-4/5 w-full items-center justify-center px-6 xl:grid-cols-1">
           <section className="grid w-full items-center justify-center md:grid-cols-2">
             {Object.entries(metrics).map(([key, value]) => (
               <Metric
@@ -102,9 +109,9 @@ const Home: NextPage = () => {
               />
             ))}
           </section>
-          <section>
+          {/* <section>
             <SwingPath />
-          </section>
+          </section> */}
         </div>
       </main>
     </>
