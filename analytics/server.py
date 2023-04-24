@@ -97,15 +97,10 @@ def detect_change(sid):
         print("file change detected, calculating metrics...")
         sensor_data = pickle.load(f)
         print(sensor_data)
-    accel, x, y, z, t, v, vf_m, fv, aa, ax, ay, az, d = algorithms.get_club_head_speed(
+    fv, bs, bd, sf, cfa, la = algorithms.process_individal_sensor_data(
         sensor_data)
-    fv = round(fv, 2)
-    bs = round(algorithms.get_ball_speed("driver", fv), 2)
-    bd = round(algorithms.get_ball_distance(fv, bs), 2)
-    sf = round(algorithms.get_smash_factor(fv, bs), 2)
-    print(f"final velo = {fv}")
     print("metrics calculated, sending to client...")
-    metrics(sid, 'data', fv, 1, bs, bd, sf, 1)
+    metrics(sid, 'data', fv, cfa, bs, bd, sf, la)
 
     return True
 

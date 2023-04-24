@@ -111,17 +111,15 @@ def main():
             #sleep_random(1, 1000)
 
             while True:
-                s1 = int.from_bytes(
-                    rx_s1_numElements.read_value(), "little", signed=False)
+                s1 = 0
                 s2 = int.from_bytes(
                     rx_s2_numElements.read_value(), "little", signed=False)
                 s3 = int.from_bytes(
                     rx_s3_numElements.read_value(), "little", signed=False)
                 i = 0
-                while s1 == 0 or s2 == 0 or s3 == 0:
+                while s2 == 0 or s3 == 0:
                     print(f"waiting for data{'.'*i}", end="\r")
-                    s1 = int.from_bytes(
-                        rx_s1_numElements.read_value(), "little", signed=False)
+                    s1 = 0
                     s2 = int.from_bytes(
                         rx_s2_numElements.read_value(), "little", signed=False)
                     s3 = int.from_bytes(
@@ -133,7 +131,8 @@ def main():
                 print(f"printing {s1} amount of values from sensor 1")
                 #start = time.time()
                 data_1 = []
-                for i in range(s1 // 2):
+                s1_diff = 0
+                for i in range(s1_diff, s1 // 2):
                     rx_s1_read = rx_s1.read_value()
 
                     list_of_data_1 = struct.unpack(
@@ -148,7 +147,8 @@ def main():
                 print(f"printing {s2} amount of values from sensor 2")
                 #start = time.time()
                 data_2 = []
-                for i in range(s2 // 2):
+                s2_diff = s2 - 106
+                for i in range(s2_diff, s2 // 2):
                     rx_s2_read = rx_s2.read_value()
 
                     list_of_data_2 = struct.unpack(
@@ -160,7 +160,8 @@ def main():
 
                 print(f"printing {s3} amount of values from sensor 3")
                 data_3 = []
-                for i in range(s3 // 2):
+                s3_diff = s3 - 106
+                for i in range(s3_diff, s3 // 2):
                     rx_s3_read = rx_s3.read_value()
 
                     list_of_data_3 = struct.unpack(
