@@ -99,6 +99,14 @@ def detect_change(sid):
         print(sensor_data)
     fv, bs, bd, sf, cfa, la = algorithms.process_individal_sensor_data(
         sensor_data)
+
+    fv = round(fv, 2)
+    bs = round(bs, 2)
+    bd = round(bd, 2)
+    sf = round(sf, 2)
+    cfa = round(cfa, 2)
+    la = round(la, 2)
+
     print("metrics calculated, sending to client...")
     metrics(sid, 'data', fv, cfa, bs, bd, sf, la)
 

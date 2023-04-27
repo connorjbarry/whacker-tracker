@@ -295,7 +295,7 @@ def get_smash_factor(club_head_speed, ball_speed):
 
 def get_launch_angle(club, angle):
     loft = CLUBLOFT[club]
-    return loft + angle
+    return (loft + angle)
 
 
 def get_club_face_angle(anglur_accel_y, idx):
@@ -323,9 +323,6 @@ def process_individal_sensor_data(data):
     # sensor_one = data[0:len_sensor_data]
     sensor_two = data[0:len_sensor_data]
     sensor_three = data[len_sensor_data:len_sensor_data * 2]
-    print(
-        f'len of sensor2 {len(sensor_two)} len of sensor3 {len(sensor_three)}')
-
     # t_1, aa_1, x_1, y_1, z_1, ax_1, ay_1, az_1, d_1, accel_1, taa_1, tla_1 = process_data(
     #     sensor_one)
     # nx1, ny1, nz1 = velocity_calc([x_1, y_1, z_1], [ax_1, ay_1, az_1])
@@ -359,18 +356,20 @@ def process_individal_sensor_data(data):
     s2_launch_angle = get_launch_angle('driver', s2_club_face_angle)
     s3_launch_angle = get_launch_angle('driver', s3_club_face_angle)
 
-    s1_predicted_chs = ((s2_club_head_speed - s3_club_head_speed) /
-                        10) * SENS1_DIST
+    s1_predicted_chs = abs(((s2_club_head_speed - s3_club_head_speed) /
+                            10) * SENS1_DIST)
+    if s1_predicted_chs < s2_club_head_speed and s1_predicted_chs < s3_club_head_speed:
+        s1_predicted_chs = s2_club_head_speed + s1_predicted_chs
     s1_predicted_bs = get_ball_speed('driver', s1_predicted_chs)
     s1_predicted_dist = get_ball_distance(s1_predicted_chs, s1_predicted_bs)
     s1_predicted_sf = get_smash_factor(s1_predicted_chs, s1_predicted_bs)
-    s1_predicted_cla = ((s2_club_face_angle - s3_club_face_angle) /
-                        10) * SENS1_DIST
+    s1_predicted_cfa = ((s2_club_face_angle - s3_club_face_angle) /
+                        10) * 30
     s1_predicted_la = ((s2_launch_angle - s3_launch_angle) /
-                       10) * SENS1_DIST
+                       10) * 30
 
     print('Sensor 1')
-    print(tabulate([['Ball Speed', s1_predicted_bs], ['Club Head Speed', s1_predicted_chs], ['Ball Distance', s1_predicted_dist], ['Smash Factor', s1_predicted_sf], ['Club Face Angle', s1_predicted_cla], ['Launch Angle', s1_predicted_la]], headers=[
+    print(tabulate([['Ball Speed', s1_predicted_bs], ['Club Head Speed', s1_predicted_chs], ['Ball Distance', s1_predicted_dist], ['Smash Factor', s1_predicted_sf], ['Club Face Angle', s1_predicted_cfa], ['Launch Angle', s1_predicted_la]], headers=[
           'Data', 'Value'], tablefmt='orgtbl'))
 
     print('Sensor 2')
@@ -381,17 +380,17 @@ def process_individal_sensor_data(data):
     print(tabulate([['Ball Speed', s3_ball_speed], ['Club Head Speed', s3_club_head_speed], ['Ball Distance', s3_ball_distance], [
           'Smash Factor', s3_smash_factor], ['Club Face Angle', s3_club_face_angle], ['Launch Angle', s3_launch_angle]], headers=['Data', 'Value'], tablefmt='orgtbl'))
 
-    print(f'Sensor position data')
-    print(
-        f'\n{tabulate(zip(xs_2, ys_2, zs_2), headers=["x", "y", "z"], tablefmt="pretty")}\n')
+    # print(f'Sensor position data')
+    # print(
+    #     f'\n{tabulate(zip(xs_2, ys_2, zs_2), headers=["x", "y", "z"], tablefmt="pretty")}\n')
 
-    plot_position(xs_2, ys_2, zs_2)
+    # plot_position(xs_2, ys_2, zs_2)
 
-    print(f'Sensor 2 velocity data')
-    print(
-        f'\n{tabulate(zip(nx2, ny2, nz2, s2_v), headers=["x", "y", "z", "m/s2"], tablefmt="pretty")}\n')
+    # print(f'Sensor 2 velocity data')
+    # print(
+    #     f'\n{tabulate(zip(nx2, ny2, nz2, s2_v), headers=["x", "y", "z", "m/s2"], tablefmt="pretty")}\n')
 
-    return s1_predicted_chs, s1_predicted_bs, s1_predicted_dist, s1_predicted_sf, s1_predicted_cla, s1_predicted_la
+    return s1_predicted_chs, s1_predicted_bs, s1_predicted_dist, s1_predicted_sf, s1_predicted_cfa, s1_predicted_la
 
 
 def get_club_position_data(linear_accel):
@@ -492,7 +491,9 @@ def plot_position(x, y, z):
 
 def plot_acceleration(linear_accel, angular_accel, linear_velo, position=[0 for i in range(104)]):
     data_len = len(linear_accel)
-    time = [i * TIME_PER_DATA_POLL for i in range(data_len - 2)]
+    print(
+        f'types: {type(linear_accel)} {type(angular_accel)} {type(linear_velo)} )')
+    time = [i * TIME_PER_DATA_POLL for i in range(data_len - 1)]
     fig, axs = plt.subplots(2, 2)
     # plot the linear acceleration
     axs[0, 0].plot(time, linear_accel[2:])
@@ -503,7 +504,7 @@ def plot_acceleration(linear_accel, angular_accel, linear_velo, position=[0 for 
     axs[0, 1].scatter(time, angular_accel[2:])
 
     # plot the position
-    position_time = [i * TIME_PER_DATA_POLL for i in range(len(position) - 2)]
+    position_time = [i * TIME_PER_DATA_POLL for i in range(len(position))]
     axs[1, 0].plot(time, position)
     axs[1, 0].scatter(time, position)
 
@@ -539,7 +540,7 @@ if __name__ == "__main__":
     print(f'{"="*20} Testing {"="*20}\n')
     # t, aa, x, y, z, ax, ay, az, d, accel, taa, tla = process_data(data)
     process_individal_sensor_data(data)
-    # v, vf_m, fv = get_club_head_speed(z, accel)
+    # v, vf_m, fv, _ = get_club_head_speed(z, accel)
     # velo_idx = vf_m.index(fv)
     # print(f"INTIAL DATA: {t}\n")
     # print(
@@ -570,4 +571,4 @@ if __name__ == "__main__":
 
     # print(f'{"="*10} PLOT {"="*10}\n')
     # plot_position(x_pos, y_pos, z_pos)
-    # plot_acceleration(tla, taa, vf_m)
+    # plot_acceleration(tla, taa, v)

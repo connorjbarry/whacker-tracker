@@ -98,7 +98,7 @@ const Home: NextPage = () => {
           window to swing. Please only click it when ready to swing.
         </p>
         <p className="flex items-center justify-center text-slate-300 opacity-75">
-          <strong>Note:</strong>&nbsp; These values are just calculated and not
+          <strong>Note:</strong>&nbsp; These values are calculated and not
           true distances or speeds.
         </p>
         <div className="grid h-4/5 w-full items-center justify-center px-6 xl:grid-cols-1">
